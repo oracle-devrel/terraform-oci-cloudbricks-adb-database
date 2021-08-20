@@ -58,10 +58,10 @@ data "oci_core_network_security_groups" "NSG" {
 
 locals {
 
- #Subnet OCID local accessors
+  #Subnet OCID local accessors
   subnet_ocid = length(data.oci_core_subnets.SUBNET.subnets) > 0 ? data.oci_core_subnets.SUBNET.subnets[0].id : null
 
- # Compartment OCID Local Accessor 
+  # Compartment OCID Local Accessor 
   compartment_id    = lookup(data.oci_identity_compartments.COMPARTMENTS.compartments[0], "id")
   nw_compartment_id = lookup(data.oci_identity_compartments.NWCOMPARTMENTS.compartments[0], "id")
   # VCN OCID Local Accessor
