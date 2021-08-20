@@ -3,7 +3,7 @@
 [![License: UPL](https://img.shields.io/badge/license-UPL-green)](https://img.shields.io/badge/license-UPL-green) [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=oracle-devrel_terraform-oci-cloudbricks-adb-database)](https://sonarcloud.io/dashboard?id=oracle-devrel_terraform-oci-cloudbricks-adb-database)
 
 ## Introduction
-The following brick contains the logic to provision an ADB
+The following brick contains the logic to provision an ADB in any container of choice. 
 
 ## Reference Architecture
 The following is the reference architecture associated to this brick
@@ -11,48 +11,62 @@ The following is the reference architecture associated to this brick
 ![Reference Architecture](./images/Bricks_Architectures-ADB.jpeg)
 
 ### Prerequisites
-- Pre-baked Artifact and Network Compartments
+- Pre-created Artifact and Network Compartments
+- Pre-created VCN and subnet structure
+- Pre-created Network Security Group
 
 ---
 
 ## Sample tfvar file
 ```shell
+########## SAMPLE TFVAR FILE ##########
 ######################################## COMMON VARIABLES ######################################
-region           = "sa-santiago-1"
-tenancy_ocid     = "ocid1.tenancy.oc1..aaaaaaaaoqdygmiidrabhv3y4hkr3rb3z6dpmgotvq2scffra6jt7rubresa"
-user_ocid        = "ocid1.user.oc1..aaaaaaaafl42rhkw624h4os6n2ulcfxjjn2ylqsanhgtcph7j7owirzj6gya"
-fingerprint      = "9a:9e:13:cf:94:6e:2c:b9:54:d2:60:0d:e4:14:8b:5e"
-private_key_path = "/Users/dralquinta/OneDrive/DevOps/My_Keys/oci_api_key.pem"
+region           = "foo-region-1"
+tenancy_ocid     = "ocid1.tenancy.oc1..abcdefg"
+user_ocid        = "ocid1.user.oc1..aaaaaaabcdefg"
+fingerprint      = "fo:oo:ba:ar:ba:ar"
+private_key_path = "/absolute/path/to/api/key/your_api_key.pem"
 ######################################## COMMON VARIABLES ######################################
 
 ######################################## ARTIFACT SPECIFIC VARIABLES ######################################
-adb_instance_compartment_name = "DALQUINT_HUB_Artifacts"
-adb_network_compartment_name  = "DALQUINT_HUB"
-vcn_display_name              = "DALQUINT_HUB_VCN"
-network_subnet_name           = "dalquint_hub_pvt_subnet"
-adb_nsg_name                  = "WFH_NSG"
+adb_instance_compartment_name = "MY_ARTIFACT_COMPARTMENT"
+adb_network_compartment_name  = "MY_NETWORK_COMPARTMENT"
+vcn_display_name              = "MY_VCN"
+network_subnet_name           = "My_Subnet"
+adb_nsg_name                  = "My_NSG"
 adb_workload                  = "OLTP"
 database_version              = "19c"
 cpu_core_count                = "1"
 data_storage_size_in_tbs      = "1"
 db_name                       = "ADBTEST"
-display_name                  = "unitaryadb01"
-private_endpoint_label        = "unitaryadm01"
+display_name                  = "adbname"
+private_endpoint_label        = "adbname"
 license_model                 = "BRING_YOUR_OWN_LICENSE"
 is_auto_scaling_enabled       = true
 is_data_guard_enabled         = false
 is_dedicated                  = false
 ######################################## ARTIFACT SPECIFIC VARIABLES ######################################
+########## SAMPLE TFVAR FILE ##########
 ```
 
 ### Variable specific considerations
-MISSING
+- Variable `license_model` can have the following options: 
+  - `BRING_YOUR_OWN_LICENSE`
+  - `LICENSE_INCLUDED`
+- Variable `adb_nsg_name` can be representing the following options: 
+  - `OLTP` - indicates an Autonomous Transaction Processing database
+  - `DW` - indicates an Autonomous Data Warehouse database
+  - `AJD` - indicates an Autonomous JSON Database
+  - `APEX` - indicates an Autonomous Database with the Oracle APEX Application Development workload type. 
+    - *Note 1*: db_workload can only be updated from AJD to OLTP or from a free OLTP to AJD.
+    - *Note 2*: `APEX` workflowd only supports `LICENSE_INCLUDED` License Model
+- Variable `database_version` should grab any of the supported ones mentioned on the [following link](https://docs.oracle.com/en-us/iaas/Content/Database/Concepts/adboverview.htm#older_db_versions)
+- Variables `db_name` must begin with an alphabetic character and can contain a maximum of 14 alphanumeric characters. Special characters are not permitted. The database name must be unique in the tenancy
+- Keep variables `display_name` and `private_endpoint_label`with the same name
+
 
 ### Sample provider
-
 The following is the base provider definition to be used with this module
-
-##### JUST COPIED FROM LINUX COMPUTE ######
 
 ```shell
 terraform {
@@ -78,6 +92,7 @@ provider "oci" {
 }
 ```
 
+## Variable documentation
 ## Requirements
 
 No requirements.
