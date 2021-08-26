@@ -53,7 +53,7 @@ is_dedicated                  = false
 - Variable `license_model` can have the following options: 
   - `BRING_YOUR_OWN_LICENSE`
   - `LICENSE_INCLUDED`
-- Variable `adb_nsg_name` can be representing the following options: 
+- Variable `adb_workload` can be representing the following options: 
   - `OLTP` - indicates an Autonomous Transaction Processing database
   - `DW` - indicates an Autonomous Data Warehouse database
   - `AJD` - indicates an Autonomous JSON Database
